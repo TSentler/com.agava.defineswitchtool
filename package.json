@@ -1,0 +1,8 @@
+{
+  "name": "com.agava.defineswitchtool",
+  "version": "1.0.0",
+  "displayName": "Define Switch Tool",
+  "type": "tool",
+  "unity": "2020.3",
+  "description": "Switch tool for script define symbols"
+}
