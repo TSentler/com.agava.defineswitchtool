@@ -62,6 +62,9 @@ namespace DefineSwitchTool.Editor
                 }
             }
 
+            _checkedSymbols.RemoveAll(
+                symbol => DefineSymbols.Contains(symbol) == false);
+
             if (GUILayout.Button("Apply"))
             {
                 DefineSwitcher.AddDefineSymbols(_checkedSymbols.ToArray(), _customDefines);
