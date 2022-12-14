@@ -9,6 +9,8 @@ namespace DefineSwitchTool.Editor
         private CustomDefines _customDefines;
         private List<string> _checkedSymbols;
 
+        private List<string> DefineSymbols => _customDefines.DefineSymbolsData.Symbols;
+        
         private void OnEnable()
         {
             _customDefines = new CustomDefines();
@@ -35,13 +37,17 @@ namespace DefineSwitchTool.Editor
         private void OnGUI()
         {
             GUILayout.Label("DefineSymbols", EditorStyles.boldLabel);
-            SerializedObject serializedObject = 
-                new SerializedObject(_customDefines.DefineSymbolsData);
-            SerializedProperty stringsProperty = serializedObject.FindProperty(
-                _customDefines.SymbolsName);
-            EditorGUILayout.PropertyField(stringsProperty, true);
-            serializedObject.ApplyModifiedProperties();
-
+            int newCount = Mathf.Max(0, EditorGUILayout.IntField("size", DefineSymbols.Count));
+            while (newCount < DefineSymbols.Count)
+                DefineSymbols.RemoveAt( DefineSymbols.Count - 1 );
+            while (newCount > DefineSymbols.Count)
+                DefineSymbols.Add("");
+ 
+            for(int i = 0; i < DefineSymbols.Count; i++)
+            {
+                DefineSymbols[i] = GUILayout.TextField(DefineSymbols[i]);
+            }
+            
             foreach (var symbol in _customDefines.DefineSymbolsData.Symbols)
             {
                 var isChecked = _checkedSymbols.Contains(symbol);
