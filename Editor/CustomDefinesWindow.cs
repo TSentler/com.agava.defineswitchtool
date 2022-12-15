@@ -28,6 +28,13 @@ namespace DefineSwitchTool.Editor
             }
         }
 
+        private void OnDisable()
+        {
+            EditorUtility.SetDirty(_customDefines.DefineSymbolsData);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+        
         [MenuItem("Tools/DefineSwitcher/CustomDefines")]
         public static void ShowWindow()
         {
