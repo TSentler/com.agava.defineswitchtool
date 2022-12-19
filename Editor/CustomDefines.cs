@@ -7,22 +7,6 @@ namespace DefineSwitchTool.Editor
 {
     public class CustomDefines
     {
-        private const string _defineSwitchToolFolder = "DefineSwitchTool";
-
-        public static readonly string DefineSymbolsDataPath =
-            "Assets/" + _defineSwitchToolFolder + "/Editor/"
-            + typeof(DefineSymbolsData).Name + ".asset";
-                
-        private DefineSymbolsData _defineSymbolsData;
-
-        public static string VkGamesName => "VK_GAMES";
-        public static string YandexGamesName => "YANDEX_GAMES";
-        public static string CrazyGamesName => "CRAZY_GAMES";
-
-        public bool IsInitialized => _defineSymbolsData != null;
-        public string SymbolsName => nameof(_defineSymbolsData.Symbols);
-        public DefineSymbolsData DefineSymbolsData => _defineSymbolsData;
-        
         public CustomDefines()
         {
             _defineSymbolsData = LoadDefineSymbolsData();
@@ -31,6 +15,32 @@ namespace DefineSwitchTool.Editor
                 _defineSymbolsData = CreateDefineSymbolsData();
             }
         }
+        
+        private const string _assetsFolder = "Assets";
+        private const string _editorFolder = "Editor";
+        private const string _defineSwitchToolFolder = "DefineSwitchTool";
+
+        public static readonly string AssetName = typeof(DefineSymbolsData).Name; 
+        public static readonly string FileName = AssetName + ".asset";
+        public static readonly string WorkFolderPath =
+            _defineSwitchToolFolder + "/" + _editorFolder;
+        public static readonly string WorkFilePath =
+            WorkFolderPath + "/" + FileName;
+        public static readonly string AssetFolderPath =
+            _assetsFolder + "/" + WorkFolderPath;
+        public static readonly string AssetFilePath =
+            AssetFolderPath + "/" + FileName;
+        
+        private static readonly string _fullFilePath = Application.dataPath + "/" + WorkFilePath;
+                
+        private DefineSymbolsData _defineSymbolsData;
+
+        public static string VkGamesName => "VK_GAMES";
+        public static string YandexGamesName => "YANDEX_GAMES";
+        public static string CrazyGamesName => "CRAZY_GAMES";
+
+        public bool IsInitialized => _defineSymbolsData != null;
+        public DefineSymbolsData DefineSymbolsData => _defineSymbolsData;
         
         public void Save()
         {
@@ -67,27 +77,44 @@ namespace DefineSwitchTool.Editor
 
         private DefineSymbolsData CreateDefineSymbolsData()
         {
-            CreateFolder();
+            Debug.Log("Try create " + AssetName);
+            var assets = AssetDatabase.FindAssets(AssetName, 
+                new []{AssetFolderPath});
+            if (assets.Length > 0)
+            {
+                Debug.Log("File already exists " + assets[0]);
+                AssetDatabase.Refresh();
+                return LoadDefineSymbolsData();
+            }
             
+            if (System.IO.File.Exists(_fullFilePath))
+            {
+                Debug.Log("File already exists " + _fullFilePath);
+                return null;
+            }
+            
+            CreateFolder();
             DefineSymbolsData asset =
                 ScriptableObject.CreateInstance<DefineSymbolsData>();
-            AssetDatabase.CreateAsset(asset, DefineSymbolsDataPath);
+            AssetDatabase.CreateAsset(asset, AssetFilePath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            return AssetDatabase.LoadAssetAtPath<DefineSymbolsData>(DefineSymbolsDataPath);
+            return AssetDatabase.LoadAssetAtPath<DefineSymbolsData>(AssetFilePath);
         }
 
         private static void CreateFolder()
         {
-            var path = "Assets";
+            var path = _assetsFolder;
             var folder = _defineSwitchToolFolder;
-            if (AssetDatabase.IsValidFolder(path + "/" + folder) == false)
-            {
-                AssetDatabase.CreateFolder(path, folder);
-            }
+            CreateFolder(path, folder);
 
             path += "/" +folder;
-            folder = "Editor";
+            folder = _editorFolder;
+            CreateFolder(path, folder);
+        }
+
+        private static void CreateFolder(string path, string folder)
+        {
             if (AssetDatabase.IsValidFolder(path + "/" + folder) == false)
             {
                 AssetDatabase.CreateFolder(path, folder);
@@ -96,8 +123,13 @@ namespace DefineSwitchTool.Editor
 
         private DefineSymbolsData LoadDefineSymbolsData()
         {
-            return AssetDatabase.LoadAssetAtPath<DefineSymbolsData>(
-                DefineSymbolsDataPath);
+            var defineSymbolsData = AssetDatabase.
+                LoadAssetAtPath<DefineSymbolsData>(AssetFilePath);
+            if (defineSymbolsData == null)
+            {
+                Debug.Log("Cant load " + AssetFilePath);
+            }
+            return defineSymbolsData;
         }
     }
 }

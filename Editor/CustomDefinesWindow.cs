@@ -13,22 +13,21 @@ namespace DefineSwitchTool.Editor
         
         private void OnEnable()
         {
-            _customDefines = new CustomDefines();
+            if (_customDefines == null)
+                _customDefines = new CustomDefines();
 
             if (_customDefines.IsInitialized)
             {
-                //Selection.activeObject = _customDefines.DefineSymbolsData;
                 _checkedSymbols = DefineSwitcher.GetCurrentDefineSymbols();
             }
             else
             {
-                Debug.LogError("Can`t find " 
-                               + CustomDefines.DefineSymbolsDataPath);
+                Debug.LogError("Can`t find " + CustomDefines.AssetFilePath);
                 Close();
             }
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             _customDefines.Save();
         }

@@ -3,7 +3,7 @@
 Make sure you have standalone [Git](https://git-scm.com/downloads) installed first. Reboot after installation.  
 In Unity, open "Window" -> "Package Manager".  
 Click the "+" sign on top left corner -> "Add package from git URL..."  
-Paste this: `https://github.com/tsentler/com.agava.defineswitchtool.git#1.0.1`  
+Paste this: `https://github.com/tsentler/com.agava.defineswitchtool.git#1.0.2`  
 See minimum required Unity version in the `package.json` file.  
 To update the package, simply add it again while using a different version tag.  
 
