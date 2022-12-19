@@ -30,9 +30,7 @@ namespace DefineSwitchTool.Editor
 
         private void OnDisable()
         {
-            EditorUtility.SetDirty(_customDefines.DefineSymbolsData);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            _customDefines.Save();
         }
         
         [MenuItem("Tools/DefineSwitcher/CustomDefines")]
@@ -52,13 +50,13 @@ namespace DefineSwitchTool.Editor
  
             for(int i = 0; i < DefineSymbols.Count; i++)
             {
-                DefineSymbols[i] = GUILayout.TextField(DefineSymbols[i]);
-            }
-            
-            foreach (var symbol in _customDefines.DefineSymbolsData.Symbols)
-            {
+                var symbol = DefineSymbols[i];
                 var isChecked = _checkedSymbols.Contains(symbol);
-                var isCheckedNow = EditorGUILayout.Toggle(symbol, isChecked);
+                EditorGUILayout.BeginHorizontal();
+                var isCheckedNow = EditorGUILayout.Toggle("", isChecked, 
+                    GUILayout.MaxWidth(15f));
+                DefineSymbols[i] = GUILayout.TextField(DefineSymbols[i]);
+                EditorGUILayout.EndHorizontal();
                 if (isChecked && isCheckedNow == false)
                 {
                     _checkedSymbols.Remove(symbol);
@@ -72,8 +70,12 @@ namespace DefineSwitchTool.Editor
             _checkedSymbols.RemoveAll(
                 symbol => DefineSymbols.Contains(symbol) == false);
 
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.Space(10f);
+            EditorGUILayout.EndVertical();
             if (GUILayout.Button("Apply"))
             {
+                _customDefines.Save();
                 DefineSwitcher.AddDefineSymbols(_checkedSymbols.ToArray(), _customDefines);
             }
         }

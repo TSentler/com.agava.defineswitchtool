@@ -32,6 +32,16 @@ namespace DefineSwitchTool.Editor
             }
         }
         
+        public void Save()
+        {
+            if (IsInitialized)
+            {
+                EditorUtility.SetDirty(DefineSymbolsData);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
+        }
+        
         public IEnumerable<string> ExcludeFrom(IEnumerable<string> defines)
         {
             return defines.Except(_defineSymbolsData.Symbols);
@@ -61,9 +71,7 @@ namespace DefineSwitchTool.Editor
             
             DefineSymbolsData asset =
                 ScriptableObject.CreateInstance<DefineSymbolsData>();
-            string uniqAssetPath =
-                AssetDatabase.GenerateUniqueAssetPath(DefineSymbolsDataPath);
-            AssetDatabase.CreateAsset(asset, uniqAssetPath);
+            AssetDatabase.CreateAsset(asset, DefineSymbolsDataPath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             return AssetDatabase.LoadAssetAtPath<DefineSymbolsData>(DefineSymbolsDataPath);
